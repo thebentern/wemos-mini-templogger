@@ -1,14 +1,17 @@
 #include <ESP8266WiFi.h>
-#include <WEMOS_SHT3X.h>
 #include <Ticker.h>
 #include <AsyncMqttClient.h>
 
-#define WIFI_SSID "Endor"
-#define WIFI_PASSWORD "my-awesome-password"
-#define MQTT_HOST IPAddress(192, 168, 1, 10)
+#define WIFI_SSID "MyWifiAp"
+#define WIFI_PASSWORD "MyPassword"
+
+#define MQTT_ADDRESS IPAddress(192, 168, 2, 59)
 #define MQTT_PORT 1883
 
-SHT3X sht30(0x45);
+#define MQTT_TOPIC_TEMPERATURE "home/masterbedroom/temperature"
+#define MQTT_TOPIC_HUMIDITY "home/masterbedroom/humidity"
+
+#define ONE_MINUTE 60000
 
 WiFiEventHandler wifiConnectHandler;
 WiFiEventHandler wifiDisconnectHandler;
@@ -16,20 +19,6 @@ Ticker wifiReconnectTimer;
 
 AsyncMqttClient mqttClient;
 Ticker mqttReconnectTimer;
-
-/*
-void loop() {
-  sht30.get();
-  Serial.print("Temperature in Celsius : ");
-  Serial.println(sht30.cTemp);
-  Serial.print("Temperature in Fahrenheit : ");
-  Serial.println(sht30.fTemp);
-  Serial.print("Relative Humidity : ");
-  Serial.println(sht30.humidity);
-  Serial.println();
-  delay(1000);
-}
-*/
 
 void setup() {
   Serial.begin(9600);
@@ -41,14 +30,21 @@ void setup() {
 
   mqttClient.onConnect(onMqttConnect);
   mqttClient.onDisconnect(onMqttDisconnect);
-  mqttClient.onSubscribe(onMqttSubscribe);
-  mqttClient.onUnsubscribe(onMqttUnsubscribe);
   mqttClient.onMessage(onMqttMessage);
   mqttClient.onPublish(onMqttPublish);
-  mqttClient.setServer(MQTT_HOST, MQTT_PORT);
+  mqttClient.setServer(MQTT_ADDRESS, MQTT_PORT);
 
   connectToWifi();
 }
 
 void loop() {
+  char payload[10];
+
+  getTemperature(payload);
+  mqttClient.publish(MQTT_TOPIC_TEMPERATURE, 0, true, payload);
+  
+  getHumidity(payload);
+  mqttClient.publish(MQTT_TOPIC_HUMIDITY, 0, true, payload);
+  
+  delay(ONE_MINUTE);
 }
