@@ -10,7 +10,7 @@ Basic installation and usage
 
 * Clone repository
 
-* Modify definitions in main.ino to match your target environment 
+* Modify the definitions in main.ino to match your target environment 
 
 ### Wifi connection settings
 
@@ -36,7 +36,7 @@ Basic installation and usage
 
 ### Reporting interval
 
-* Default is one minute
+* The default publish interval is one minute
 ```cpp
 #define ONE_MINUTE 60000
 ```
