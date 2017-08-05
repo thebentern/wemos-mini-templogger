@@ -1,4 +1,7 @@
+
 # wemos-mini-templogger
+[![Build Status](https://travis-ci.org/thebentern/wemos-mini-templogger.svg?branch=master)](https://travis-ci.org/thebentern/wemos-mini-templogger)
+
 PlatformIO project for Wemo D1 Mini and SHT-30 shield
 MQTT Temperature and Humidity logging for use with Home Assistant
 
@@ -6,11 +9,13 @@ MQTT Temperature and Humidity logging for use with Home Assistant
 
 ![Mqtt message](mqtt-message.png)
 
-Basic installation and usage
+## Basic installation and usage
 
 * Clone repository
 
-* Modify the definitions in main.ino to match your target environment 
+* Install [Platform IO](http://platformio.org/)
+
+* Modify the definitions in main.ino to match your target environment:
 
 ### Wifi connection settings
 
@@ -27,7 +32,7 @@ Basic installation and usage
 ```
 ### MQTT topics
 
-* Topics are separate for temperature and relative humidity
+Topics are separate for temperature and relative humidity
 
 ```cpp
 #define MQTT_TOPIC_TEMPERATURE "home/masterbedroom/temperature"
@@ -36,7 +41,14 @@ Basic installation and usage
 
 ### Reporting interval
 
-* The default publish interval is one minute
+The default publish interval is one minute
 ```cpp
 #define ONE_MINUTE 60000
+```
+
+* Run Platform IO build scripts:
+
+```cmd
+platformio run --target upload
+platformio device monitor --baud 9600
 ```
